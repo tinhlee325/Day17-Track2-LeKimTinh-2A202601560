@@ -1,3 +1,5 @@
+-- depends_on: {{ ref('silver_tickets') }}
+
 -- ---------------------------------------------------------------------------
 -- gold_training_set — tập huấn luyện cho mô hình phân loại ticket.
 -- Grain: 1 hàng / 1 ticket.
@@ -25,8 +27,10 @@
 -- ---------------------------------------------------------------------------
 
 {{ config(
-    materialized     = 'incremental',
-    on_schema_change = 'fail'
+    materialized          = 'incremental',
+    unique_key            = 'ticket_id',
+    incremental_strategy  = 'merge',
+    on_schema_change      = 'fail'
 ) }}
 
 select

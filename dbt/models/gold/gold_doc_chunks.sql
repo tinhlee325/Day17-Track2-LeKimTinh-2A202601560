@@ -1,3 +1,5 @@
+-- depends_on: {{ ref('silver_transcripts') }}
+
 -- Gold: chunk văn bản để nạp vào index RAG.
 -- Grain: MỘT hàng cho MỘT chunk.
 --

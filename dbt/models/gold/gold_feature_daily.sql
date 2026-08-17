@@ -1,3 +1,5 @@
+-- depends_on: {{ ref('silver_events') }}
+
 -- ---------------------------------------------------------------------------
 -- gold_feature_daily — đặc trưng theo ngày cho agent định tuyến.
 -- Grain: 1 hàng / 1 cặp (event_date, customer_id).
@@ -30,8 +32,10 @@
 -- ---------------------------------------------------------------------------
 
 {{ config(
-    materialized     = 'incremental',
-    on_schema_change = 'fail'
+    materialized          = 'incremental',
+    unique_key            = ['event_date', 'customer_id'],
+    incremental_strategy  = 'delete+insert',
+    on_schema_change      = 'fail'
 ) }}
 
 select
@@ -49,7 +53,7 @@ select
 from {{ ref('silver_events') }}
 
 {% if is_incremental() %}
-where event_date > (select max(event_date) from {{ this }})
+where event_date > (select max(event_date) from {{ this }}) - interval 3 day
 {% endif %}
 
 group by 1, 2, 3, 4
